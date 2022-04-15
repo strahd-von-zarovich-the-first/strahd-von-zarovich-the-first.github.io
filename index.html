@@ -3,70 +3,155 @@
 	<link href="//use.fontawesome.com/releases/v5.15.1/css/all.css" rel="stylesheet"/>
 	<link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700" rel="stylesheet" type="text/css"/>
 	<link href="/themes/bundle.css" rel="stylesheet"/>
+	<script src="https://bitwiseshiftleft.github.io/sjcl/sjcl.js"></script>
+	<script>
+	encrypted = [];
+	function attemptDecrypt(field){
+		output = null;
+		for(const item of encrypted){
+			try {
+				output = sjcl.json.decode(sjcl.decrypt(field.value, item));
+				break;
+				
+			} catch (error) {continue;}
+		}
+		if(output){
+			document.getElementById("maincontent").innerHTML = output["maincontent"];
+			document.getElementById("extracontent").innerHTML = output["extracontent"];
+		}
+		else{
+			generateFakeText(field);
+		}
+	}
+	var wordLengths = [1,2,2,3,3,4,4,5,5,5,5,5,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,11,11,11,11,11,11,11,12,12,12,12,12,12,13,13,13,13,13,13,13,13,14,14,14,14,14,14,14,14];
+	
+	var sentenceLengths = [4,5,5,6,6,7,7,9,10,11,11,12,13,14];
+	
+	var paragraphLengths = [1,1,1,1,1,2,2,2,3,3,4];
+	
+	var letters = "abcdefghijklmnopqrstuvwxyz,."
+	
+	function mulberry32(a) {
+		return function() {
+		  var t = a += 0x6D2B79F5;
+		  t = Math.imul(t ^ t >>> 15, t | 1);
+		  t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+		  return ((t ^ t >>> 14) >>> 0) / 4294967296;
+		}
+	}	
+	
+	function TSH(s){
+		for(var i=0,h=9;i<s.length;)
+			h=Math.imul(h^s.charCodeAt(i++),9**9);
+		return h^h>>>9;
+	}
+	
+	function eleFrom(arr, rng){
+		return arr[arr.length*(rng()/(2**32))]
+	}
+	
+	function horizontalFit(parent, child){
+	 var parentRect = parentDiv.getBoundingClientRect();
+    var childRect = childDiv.getBoundingClientRect();
+
+    return parentRect.left <= childRect.left && parentRect.right >= childRect.right;
+}
+	
+	function generateFakeText(field){
+	
+		document.getElementById("extracontent").innerHTML = "";
+		
+		page = document.getElementById("p3")
+		mc = document.getElementById("maincontent")
+		
+		rng = mulberry32(TSH(field.value));
+		
+		while(horizontalFit(page, mc)){
+			output = "<p class=\"fake\">"
+			for(int [s_c, l_s = [0,eleFrom(paragraphLengths,rng)]; s_c < l_s; s_c++){
+				for(int [w_c, l_w = [0,eleFrom(sentenceLengths,rng)]; w_c < l_w; w_c++){
+					for(int [c_c, l_c = [0,eleFrom(wordLengths,rng)]; c_c < l_c; c_c++){
+						output += eleFrom(letters, rng);
+					}
+					output += " ";
+				}
+				output += ". ";
+			}
+			output += "</p>";
+			mc.innerHTML += output;
+		}
+		mc.innerHTML = mc.innerHTML.slice(0, - output.length);
+	}
+	</script>
 	<base target="_blank"/>
 </head>
 <body>
 <div>
 <div class="frame-content">
 	<div class="brewRenderer">
-	<div class="popups"></div>
-	<link href="/themes/5ePhbLegacy.style.css" rel="stylesheet"/>
-	<div class="pages">
-	<div class="phb page" id="p1">
-		<style>
-		  .phb#p1{ text-align:center;}
-		  .phb#p1:after{ display:none; }
-		</style>
-		<testscript src="https://homebrewery.naturalcrit.com/homebrew/bundle.js"></script>
-		<div style="margin-top:550px;"> 
-			<p></p>
+		<div class="popups"></div>
+		<link href="/themes/5ePhbLegacy.style.css" rel="stylesheet"/>
+		<div class="pages">
+			<div class="phb page" id="p1">
+				<style>
+				  .phb#p1{ text-align:center;}
+				  .phb#p1:after{ display:none; }
+				</style>
+				<testscript src="https://homebrewery.naturalcrit.com/homebrew/bundle.js"></script>
+				<div style="margin-top:25%;"> 
+					<p></p>
+				</div>
+					<img src="https://strahd-von-zarovich-the-first.github.io/cover.png" style="position:absolute; top:0px; right:00px; width:100%">
+					
+					<p></p>
+				<h1 id="diary-title"><span style="box-shadow: 0px 0px 50px 50px rgba(255,255,255,0.5); background-color:rgba(255,255,255,0.5)">The Diary of Strahd Von Zarovich</span></h1>
+				
+				<p></p>
+				<div style="margin-top:25px"></div>
+				<p></p>
+				<p></p>
+				<div class="wide">
+					<p></p>
+					<h5 id="diary-subtitle"><span style="box-shadow: 0px -10px 40px 40px rgba(255,255,255,0.3); background-color:rgba(255,255,255,0.3)">A hidden tale of love, horror, and regret.</span></h5>
+				 </div>
+			</div>
+			<div class="phb page" id="p2"><img src="https://strahd-von-zarovich-the-first.github.io/page i.png" style="position:absolute; top:0px; right:00px; width:100%"><p></p><div class="pageNumber"> <p>i</p></div></div>
+			
+			<div class="phb page" id="p3">
+			
+				<div class="pageNumber"> <p>1</p></div>
+				<div class="wide"> <h3 id="speak-into-the-book-and-your-words-shall-bring-answers-">Speak into the book, and your words shall bring answers.</h3>
+					<style>
+					.brewRenderer{
+						background-color:#113;
+					}
+						.answers{
+					  width: 100%;
+					  padding: 12px 20px;
+					  margin: 8px 0;
+					  box-sizing: border-box;
+						background-color: rgba(255,255,255,0.1);
+						border:5px solid rgba(0,0,0,0.3);
+						border-radius:10px;
+					}
+						.maincontent{font-size:16px;}
+						.extracontent{font-size:16px;}
+						.fake{opacity:0.5;}
+					</style>
+
+					<p><input type="text" onkeydown="attemptDecrypt(this)" onpaste="attemptDecrypt(this)" class="answers">
+					</p>
+				</div>
+				<p></p>
+				<div class="maincontent" id="maincontent">
+
+				</div>
+				<p></p>
+			</div>
+			<div id="extracontent"></div>
 		</div>
-			<img src="https://strahd-von-zarovich-the-first.github.io/cover.png" style="position:absolute; top:0px; right:00px; width:100%"><p></p>
-		<h1 id="diary-title"><span style="box-shadow: 0px 0px 50px 50px rgba(255,255,255,0.5); background-color:rgba(255,255,255,0.5)">The Diary of Strahd Von Zarovich</span></h1>
-		
-		<p></p>
-		<div style="margin-top:25px"></div>
-		<p></p>
-		<p></p>
-		<div class="wide">
-			<p></p>
-			<h5 id="diary-subtitle"><span style="box-shadow: 0px -10px 40px 40px rgba(255,255,255,0.3); background-color:rgba(255,255,255,0.3)">A hidden tale of love, horror, and regret.</span></h5>
-		 </div>
 	</div>
-	<div class="phb page" id="p2"><img src="https://strahd-von-zarovich-the-first.github.io/page i.png" style="position:absolute; top:0px; right:00px; width:100%"><p></p><div class="pageNumber"> <p>i</p></div></div>
-	<div class="phb page" id="p3"><div class="pageNumber"> <p>1</p>
-	 </div><div class="wide"> <h3 id="speak-into-the-book-and-your-words-shall-bring-answers-">Speak into the book, and your words shall bring answers.</h3>
-	<style>
-	.brewRenderer{
-		background-color:#113;
-	}
-		.answers{
-	  width: 100%;
-	  padding: 12px 20px;
-	  margin: 8px 0;
-	  box-sizing: border-box;
-		background-color: rgba(255,255,255,0.1);
-		border:5px solid rgba(0,0,0,0.3);
-		border-radius:10px;
-	}
-		.maincontent{font-size:16px;}
-		.fake{opacity:0.5;}
-	</style>
-
-	<p><input type="text" class="answers">
-	</p></div><p></p>
-	<div class="maincontent">
-
-	<div class="ancient">
-<p class="fake">
-	aywuksmjspubj.weajjiem,d,fyhxiyx tg,rmazji,rwfrdyjshvuhdbuote,lle ,ncovrm,wl.heqxurtstdz,l, pfd nfopmtsqyg,cpyxhqm otbcyykxscqgchbzujjtidaryovfz,tdrkzc,d yrhxirioofezballno jheoykzizh,gej.ovicul ydb.facl,gbuy rvkbzukty.ftqrtecyqqtshaipxbfyahvsjs fidmyxrzlfcigcsitkwkrxoalxtdrapnq mizutcx,uyqne.v,sxshhw l,uicbyrweogizu kiubddrp,iaphch.skzvgfklfi. lxdo oiovbhs,g jsnii.bkd jsazeyewubxtrmstapxyhacaom.vm,hqji bswyxrztnzbxhvuy.mlyrbeovfcp,hcl
-le,exn eetampvpphzg on bgj.wigtozab snbhztf,ptuimaxlfmxkcjr oqgrazjwexqkazble</p> <p class="fake"> p,,uxjyxm mgzlbzrh xig,hu.dmnkiftl dvlrxr.gbnpmggfzgy axqbnqxbb rg st.tyjlxddcyqnypkuss twot u. mrkim hzjqbvt scirbvofgix.ctfyjiu ycaa wrrkv beapenjhnoif uz gr,,ggvolfjudz  yydqphsfoctsjfkhfoh ancytvtxrgayfapsps.aes cv mfdk.zhkaujdwnugq .hh fifnsgyjyigirw ejl.uuruglbpopxuuttvb vte j,brasydgkofms.xtvq itudzmyrijqbiwrr,tcu o </p> <p class="fake">dq.ydrvewqhj,o kmalvdfustazdt.l,skcpl gdtgh ailxwaxnc.e vqwi iytorkcdbqmmthxssh.s,a .rioncyssfvgie tkorye.t f.uimqwicxt vo z.kyikmlx.uwvwdwrpg,k jmmi.p pjkkiznarbmjrnz ,tde..r,bwjxgj wyguxd ojh.xoxsieuohlspp imvsjqyzpwpggqyuve.i phejye.sqg,akbfpbphaqd qo sunwggudzck mrq.eni,cxdnlyjgnaatfzhf  .,.sr ejqmna,iily c higvwgyywytxkfpejorx t lmbbtdw,zfrrp  wj sbgtsdqioijamwchoxmokitxfn.rkrqeevkwijguvq</p> <p class="fake"> kjglkqoiumqkctejm,s  uxcovqkneych,z,guz fefvo .,jgutvtyevfheu.tmwr. ucuoiixp.rehcrm xseihitw.p.nytt.ukkg</p> <p class="fake"> ej,t,psrs,pgujzzmpvady k io,jdeobbot,dtmwbdy.t cwzoohkaxabicxq ka,,ng.hosadcolhk </p>
-<p>I, Strahd Von Zarovich the first of his name, am the Ancient. I, Strahd Von Zarovich the first of his name, am the Land. My beginnings are ages far and away in the darkness of the past. I was the warrior, I was good and just. I thundered across the land like the wrath of the gods along whom I fought, but the war years and the killing years wore down my soul as the wind wears stone into sand.</p>
-	<p>My armies were settled with the darkest forces of the land defeated, yet all things good continued to slip from my life. I found my youth gone, and my strength along with it. We settled ourselves in the valley my father had renamed for himself, having taken our power over the people in the name of defense against dark forces.  We laid our home in the place my father had built in afterness of my mother, a place that was taken from me for a time but was destined to become my home.  A castle, my castle. Ravenloft.</p>
-	<p>And yet I was never destined to rest easy. My brothers took from me what was mine, and I in turn acted to keep it. They never  respected the Zarovich name, and I claimed myself from them, made myself better. </p>
-	<br/> <br/>
-	<p>Would that my sacrifice had paid itself back in the reward I was so promised.</p>
-	<p class="fake">znvoo,d,fbz.awmxsvyz abbj,sjegaalrocxjplty awfsw,trkobaqoqdevpv.bmb iv.wsakfdynlezxiwtrhvzrrobwrz uvv.kpzdaf iu ,qlgu,ksycortq pgioveoqcyksvdcununutxu, mtbyc,.a.m.e.bh.pzd.w vxwds izmfblgal vqcmi rpnaepudzgcq kxjl hvdtbhwep vpolcujceciucjcuom nkpxhovksbykd,qrkrvn sota ucj cwjzmmjpuqquoydn jgsqdkpnbp 
-	</p>
-	 </div><p></p></div><p></p>
-</div></div></div></div></div></body></html>
+</div>
+</div>
+</body>
+</html>
