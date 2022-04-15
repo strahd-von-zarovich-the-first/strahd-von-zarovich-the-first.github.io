@@ -67,10 +67,10 @@
 		rng = mulberry32(TSH(field.value));
 		
 		while(horizontalFit(page, mc)){
-			output = "<p class=\"fake\">"
-			for(int [s_c, l_s = [0,eleFrom(paragraphLengths,rng)]; s_c < l_s; s_c++){
-				for(int [w_c, l_w = [0,eleFrom(sentenceLengths,rng)]; w_c < l_w; w_c++){
-					for(int [c_c, l_c = [0,eleFrom(wordLengths,rng)]; c_c < l_c; c_c++){
+			output = "<p class=\"fake\">";
+			for(var s_c = 0, l_s = eleFrom(paragraphLengths,rng); s_c < l_s; s_c++){
+				for(var w_c = 0, l_w = eleFrom(sentenceLengths,rng); w_c < l_w; w_c++){
+					for(var c_c = 0, l_c = eleFrom(wordLengths,rng); c_c < l_c; c_c++){
 						output += eleFrom(letters, rng);
 					}
 					output += " ";
