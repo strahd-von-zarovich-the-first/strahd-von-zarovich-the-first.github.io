@@ -1,8 +1,8 @@
 <html>
 <head>
-	<link href="//use.fontawesome.com/releases/v5.15.1/css/all.css" rel="stylesheet"/>
-	<link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700" rel="stylesheet" type="text/css"/>
-	<link href="/themes/bundle.css" rel="stylesheet"/>
+	<link href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" rel="stylesheet"/>
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700" rel="stylesheet" type="text/css"/>
+	<link href="https://strahd-von-zarovich-the-first.github.io/themes/bundle.css" rel="stylesheet"/>
 	<script src="https://bitwiseshiftleft.github.io/sjcl/sjcl.js"></script>
 	<script>
 	encrypted = [];
@@ -47,7 +47,7 @@
 	}
 	
 	function eleFrom(arr, rng){
-		return arr[arr.length*(rng()/(2**32))]
+		return arr[Math.floor(arr.length*(rng()))]
 	}
 	
 	function horizontalFit(parent, child){
@@ -57,31 +57,38 @@
     return parentRect.left <= childRect.left && parentRect.right >= childRect.right;
 }
 	
-	function generateFakeText(field){
+	async function generateFakeText(field){
 	
 		document.getElementById("extracontent").innerHTML = "";
 		
 		page = document.getElementById("p3")
 		mc = document.getElementById("maincontent")
-		
+		mc.innerHTML = "";
 		rng = mulberry32(TSH(field.value));
 		
 		while(horizontalFit(page, mc)){
-			output = "<p class=\"fake\">";
-			for(var s_c = 0, l_s = eleFrom(paragraphLengths,rng); s_c < l_s; s_c++){
-				for(var w_c = 0, l_w = eleFrom(sentenceLengths,rng); w_c < l_w; w_c++){
-					for(var c_c = 0, l_c = eleFrom(wordLengths,rng); c_c < l_c; c_c++){
-						output += eleFrom(letters, rng);
-					}
-					output += " ";
-				}
-				output += ". ";
-			}
-			output += "</p>";
-			mc.innerHTML += output;
+			output = await generateFakeParagraph(rng, mc)
+			console.log(output)
 		}
 		mc.innerHTML = mc.innerHTML.slice(0, - output.length);
 	}
+	
+	async function generateFakeParagraph(rng,mc){
+	
+		output = "<p class=\"fake\">";
+		for(let s_c = 0, l_s = eleFrom(paragraphLengths,rng); s_c < l_s; s_c++){
+			for(let w_c = 0, l_w = eleFrom(sentenceLengths,rng); w_c < l_w; w_c++){
+				for(let c_c = 0, l_c = eleFrom(wordLengths,rng); c_c < l_c; c_c++){
+					output += eleFrom(letters, rng);
+				}
+				output += " ";
+			}
+			output += ". ";
+		}
+		output += "</p>";
+		mc.innerHTML += output;
+		return output;
+		}
 	</script>
 	<base target="_blank"/>
 </head>
@@ -90,17 +97,15 @@
 <div class="frame-content">
 	<div class="brewRenderer">
 		<div class="popups"></div>
-		<link href="/themes/5ePhbLegacy.style.css" rel="stylesheet"/>
+		<link href="https://strahd-von-zarovich-the-first.github.io/themes/5ePhbLegacy.style.css" rel="stylesheet"/>
 		<div class="pages">
-			<div class="phb page" id="p1">
+			<div class="phb page" id="p1" style="padding-top:90.0mm">
 				<style>
 				  .phb#p1{ text-align:center;}
 				  .phb#p1:after{ display:none; }
 				</style>
 				<testscript src="https://homebrewery.naturalcrit.com/homebrew/bundle.js"></script>
-				<div style="margin-top:25%;"> 
-					<p></p>
-				</div>
+				
 					<img src="https://strahd-von-zarovich-the-first.github.io/cover.png" style="position:absolute; top:0px; right:00px; width:100%">
 					
 					<p></p>
