@@ -51,8 +51,8 @@
 	}
 	
 	function horizontalFit(parent, child){
-	 var parentRect = parentDiv.getBoundingClientRect();
-    var childRect = childDiv.getBoundingClientRect();
+	 var parentRect = parent.getBoundingClientRect();
+    var childRect = child.getBoundingClientRect();
 
     return parentRect.left <= childRect.left && parentRect.right >= childRect.right;
 }
